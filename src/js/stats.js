@@ -188,7 +188,7 @@ var renderPageSelector = function(targetTabId) {
     if ( !uDom('#logRequests').prop('checked') ) {
         return;
     }
-    var selectedTabId = targetTabId || parseInt(uDom('#pageSelector').val(), 10);
+    var selectedTabId = targetTabId || uDom('#pageSelector').val();
     var onTabReceived = function(tab) {
         if ( !tab ) {
             return;
@@ -217,7 +217,7 @@ var renderPageSelector = function(targetTabId) {
         for ( var i = 0; i < pageSelectors.length; i++ ) {
             messager.send({
                 what: 'getTabForStats',
-                tabId: parseInt(pageSelectors[i], 10)
+                tabId: pageSelectors[i]
             }, onTabReceived);
         }
         if ( pageSelectors.length > 0 ) {
@@ -234,7 +234,7 @@ var onUserSettingsReceived = function(details) {
     uDom('#requests').toggleClass('logEnabled', details.logRequests);
 
     var matches = window.location.search.slice(1).match(/(?:^|&)which=(\d+)/);
-    var tabId = matches && matches.length === 2 ? parseInt(matches[1], 10) : 0;
+    var tabId = matches && matches.length === 2 ? matches[1] : 0;
     renderPageSelector(tabId);
 
     uDom('#logRequests').on('change', logSettingChanged);
