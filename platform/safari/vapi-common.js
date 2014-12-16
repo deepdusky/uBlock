@@ -112,16 +112,16 @@ if (safari.self.identifier === 'popover') {
         // Initial dimensions are set in Info.plist
         var pWidth = safari.self.width;
         var pHeight = safari.self.height;
-        var upadteTimer = null;
+        var updateTimer = null;
         var resizePopover = function() {
-            if (upadteTimer) {
+            if (updateTimer) {
                 return;
             }
 
-            upadteTimer = setTimeout(function() {
+            updateTimer = setTimeout(function() {
                 safari.self.width = Math.max(pWidth, document.body.clientWidth);
                 safari.self.height = Math.max(pHeight, document.body.clientHeight);
-                upadteTimer = null;
+                updateTimer = null;
             }, 20);
         };
 
