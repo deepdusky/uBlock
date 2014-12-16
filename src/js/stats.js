@@ -233,7 +233,7 @@ var onUserSettingsReceived = function(details) {
     uDom('#logRequests').prop('checked', details.logRequests);
     uDom('#requests').toggleClass('logEnabled', details.logRequests);
 
-    var matches = window.location.search.slice(1).match(/(?:^|&)which=(\d+)/);
+    var matches = window.location.search.slice(1).match(/(?:^|&)which=([^&]+)/);
     var tabId = matches && matches.length === 2 ? matches[1] : 0;
     renderPageSelector(tabId);
 
