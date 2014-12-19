@@ -3,12 +3,13 @@
 import os
 import json
 import sys
+from io import open
 from time import time
 from urllib import parse
 from shutil import rmtree
 from collections import OrderedDict
 
-if not sys.argv[1]:
+if not len(sys.argv) == 1 or not sys.argv[1]:
     raise SystemExit('Build dir missing.')
 
 
