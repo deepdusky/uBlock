@@ -216,7 +216,7 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
         }
     };
     if ( tabId ) {
-        tabid = parseInt(tabId, 10);
+        tabId = parseInt(tabId, 10);
         chrome.tabs.executeScript(tabId, details, onScriptExecuted);
     } else {
         chrome.tabs.executeScript(details, onScriptExecuted);
