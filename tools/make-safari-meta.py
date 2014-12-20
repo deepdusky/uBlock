@@ -1,15 +1,23 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 import os
 import json
 import sys
 from io import open
 from time import time
-from urllib import parse
 from shutil import rmtree
 from collections import OrderedDict
 
-if not len(sys.argv) == 1 or not sys.argv[1]:
+try:
+    from urllib.parse import quote as encodeURIComponent
+except:
+    from urllib import quote
+
+    def encodeURIComponent(s):
+        return quote(s.encode('utf8'))
+
+
+if len(sys.argv) == 1 or not sys.argv[1]:
     raise SystemExit('Build dir missing.')
 
 
@@ -45,8 +53,8 @@ for alpha2 in os.listdir(locale_dir):
 
     mkdirs(pj(locale_dir))
 
-    with open(locale_path, 'wt', encoding='utf-8', newline='\n') as f:
-        json.dump(string_data, f, ensure_ascii=False)
+    with open(locale_path, 'wb') as f:
+        f.write(json.dumps(string_data, ensure_ascii=False).encode('utf8'))
 
 
 # update Info.plist
@@ -61,7 +69,7 @@ manifest['description'] = description
 
 # pass "#name,version" as the fragment in the URL of the background script
 manifest['appInfo'] = ','.join([
-    parse.quote(manifest['name']),
+    encodeURIComponent(manifest['name']),
     manifest['version']
 ])
 
