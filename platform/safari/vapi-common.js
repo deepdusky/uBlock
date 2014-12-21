@@ -109,26 +109,26 @@ vAPI.i18n = function(s) {
 // update popover size to its content
 if (safari.self.identifier === 'popover') {
     var onLoaded = function() {
+        var observer = window.MutationObserver || window.WebkitMutationObserver;
         // Initial dimensions are set in Info.plist
         var pWidth = safari.self.width;
         var pHeight = safari.self.height;
         var updateTimer = null;
-        var resizePopover = function() {
+        var delayedResize = function() {
             if (updateTimer) {
                 return;
             }
 
-            updateTimer = setTimeout(function() {
-                safari.self.width = Math.max(pWidth, document.body.clientWidth);
-                safari.self.height = Math.max(pHeight, document.body.clientHeight);
-                updateTimer = null;
-            }, 20);
+            updateTimer = setTimeout(resizePopover, 20);
+        };
+        var resizePopover = function() {
+            safari.self.width = Math.max(pWidth, document.body.clientWidth);
+            safari.self.height = Math.max(pHeight, document.body.clientHeight);
+            updateTimer = null;
         };
 
-        var mutObs = window.MutationObserver || window.WebkitMutationObserver;
-
-        if (mutObs) {
-            (new mutObs(resizePopover)).observe(document, {
+        if (observer) {
+            (new observer(delayedResize)).observe(document, {
                 childList: true,
                 attributes: true,
                 characterData: true,
@@ -137,8 +137,10 @@ if (safari.self.identifier === 'popover') {
         }
         else {
             // Safari doesn't support DOMAttrModified
-            document.addEventListener('DOMSubtreeModified', resizePopover);
+            document.addEventListener('DOMSubtreeModified', delayedResize);
         }
+
+        delayedResize();
     };
 
     window.addEventListener('load', onLoaded);

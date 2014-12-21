@@ -8,15 +8,6 @@ from time import time
 from shutil import rmtree
 from collections import OrderedDict
 
-try:
-    from urllib.parse import quote as encodeURIComponent
-except:
-    from urllib import quote
-
-    def encodeURIComponent(s):
-        return quote(s.encode('utf8'))
-
-
 if len(sys.argv) == 1 or not sys.argv[1]:
     raise SystemExit('Build dir missing.')
 
@@ -66,12 +57,6 @@ with open(chromium_manifest, encoding='utf-8') as m:
 
 manifest['buildNumber'] = int(time())
 manifest['description'] = description
-
-# pass "#name,version" as the fragment in the URL of the background script
-manifest['appInfo'] = ','.join([
-    encodeURIComponent(manifest['name']),
-    manifest['version']
-])
 
 info_plist = pj(build_dir, 'Info.plist')
 
