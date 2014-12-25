@@ -166,6 +166,13 @@ var renderPopup = function(details) {
     uDom('#total-blocked').html(html.join(''));
     uDom('#switch .fa').toggleClass('off', stats.pageURL === '' || !stats.netFilteringSwitch);
     uDom('#dynamicFilteringToggler').toggleClass('on', stats.dynamicFilteringEnabled);
+    uDom('#gotoLog').attr('href', 'dashboard.html?tab=stats&which=' + stats.tabId);
+
+    uDom('#switch .fa').on('click', toggleNetFilteringSwitch);
+    uDom('#gotoPick').on('click', gotoPick);
+    uDom('a[href]').on('click', gotoURL);
+    uDom('#dynamicFilteringToggler').on('click', toggleDynamicFiltering);
+    uDom('.dynamicFiltering').on('click', 'div', onDynamicFilterClicked);
 };
 
 /******************************************************************************/
@@ -186,44 +193,19 @@ var toggleNetFilteringSwitch = function(ev) {
 
 /******************************************************************************/
 
-var gotoDashboard = function() {
-    messager.send({
-        what: 'gotoURL',
-        details: {
-            url: 'dashboard.html',
-            select: true,
-            index: -1
-        }
-    });
-};
-
-/******************************************************************************/
-
-var gotoStats = function() {
-    messager.send({
-        what: 'gotoURL',
-        details: {
-            url: 'dashboard.html?tab=stats&which=' + stats.tabId,
-            select: true,
-            index: -1
-        }
-    });
-};
-
-/******************************************************************************/
-
 var gotoPick = function() {
     messager.send({
         what: 'gotoPick',
         tabId: stats.tabId
     });
-    window.open('','_self').close();
+
+    vAPI.closePopup();
 };
 
 /******************************************************************************/
 
-var gotoLink = function(ev) {
-    if (!ev.target.href) {
+var gotoURL = function(ev) {
+    if (!this.hasAttribute('href')) {
         return;
     }
 
@@ -232,11 +214,13 @@ var gotoLink = function(ev) {
     messager.send({
         what: 'gotoURL',
         details: {
-            url: ev.target.href,
+            url: this.getAttribute('href'),
             select: true,
             index: -1
         }
     });
+
+    vAPI.closePopup();
 };
 
 /******************************************************************************/
@@ -257,7 +241,6 @@ var onDynamicFilterClicked = function(ev) {
         block: elFilter.hasClassName('blocked') === false,
         pageHostname: stats.pageHostname
     }, onDynamicFilterChanged);
-
 };
 
 /******************************************************************************/
@@ -278,23 +261,10 @@ var toggleDynamicFiltering = function(ev) {
 
 /******************************************************************************/
 
-var installEventHandlers = function() {
-    uDom('h1,h2,h3,h4').on('click', gotoDashboard);
-    uDom('#switch .fa').on('click', toggleNetFilteringSwitch);
-    uDom('#gotoLog').on('click', gotoStats);
-    uDom('#gotoPick').on('click', gotoPick);
-    uDom('a[href^=http]').on('click', gotoLink);
-    uDom('#dynamicFilteringToggler').on('click', toggleDynamicFiltering);
-    uDom('.dynamicFiltering').on('click', 'div', onDynamicFilterClicked);
-};
-
-/******************************************************************************/
-
 // Make menu only when popup html is fully loaded
 
 uDom.onLoad(function() {
     messager.send({ what: 'activeTabStats' }, renderPopup);
-    installEventHandlers();
 });
 
 /******************************************************************************/

@@ -106,45 +106,63 @@ vAPI.i18n = function(s) {
 
 /******************************************************************************/
 
+vAPI.closePopup = function() {
+    var safr = safari.extension.globalPage.contentWindow.safari;
+    var items = safr.extension.toolbarItems;
+
+    for (var i = 0; i < items.length; i++) {
+        if (items[i].browserWindow !== safr.application.activeBrowserWindow) {
+            continue;
+        }
+
+        if (items[i].popover && items[i].popover.visible) {
+            items[i].popover.hide();
+        }
+    }
+};
+
+/******************************************************************************/
+
+if (safari.self.identifier !== 'popover') {
+    return;
+}
+
 // update popover size to its content
-if (safari.self.identifier === 'popover') {
-    var onLoaded = function() {
-        var observer = window.MutationObserver || window.WebkitMutationObserver;
-        // Initial dimensions are set in Info.plist
-        var pWidth = safari.self.width;
-        var pHeight = safari.self.height;
-        var updateTimer = null;
-        var delayedResize = function() {
-            if (updateTimer) {
-                return;
-            }
 
-            updateTimer = setTimeout(resizePopover, 20);
-        };
-        var resizePopover = function() {
-            safari.self.width = Math.max(pWidth, document.body.clientWidth);
-            safari.self.height = Math.max(pHeight, document.body.clientHeight);
-            updateTimer = null;
-        };
-
-        if (observer) {
-            (new observer(delayedResize)).observe(document, {
-                childList: true,
-                attributes: true,
-                characterData: true,
-                subtree: true
-            });
-        }
-        else {
-            // Safari doesn't support DOMAttrModified
-            document.addEventListener('DOMSubtreeModified', delayedResize);
+window.addEventListener('load', function() {
+    var observer = window.MutationObserver || window.WebkitMutationObserver;
+    // Initial dimensions are set in Info.plist
+    var pWidth = safari.self.width;
+    var pHeight = safari.self.height;
+    var updateTimer = null;
+    var delayedResize = function() {
+        if (updateTimer) {
+            return;
         }
 
-        delayedResize();
+        updateTimer = setTimeout(resizePopover, 20);
+    };
+    var resizePopover = function() {
+        safari.self.width = Math.max(pWidth, document.body.clientWidth);
+        safari.self.height = Math.max(pHeight, document.body.clientHeight);
+        updateTimer = null;
     };
 
-    window.addEventListener('load', onLoaded);
-}
+    if (observer) {
+        (new observer(delayedResize)).observe(document, {
+            childList: true,
+            attributes: true,
+            characterData: true,
+            subtree: true
+        });
+    }
+    else {
+        // Safari doesn't support DOMAttrModified
+        document.addEventListener('DOMSubtreeModified', delayedResize);
+    }
+
+    delayedResize();
+});
 
 /******************************************************************************/
 
