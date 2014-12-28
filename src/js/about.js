@@ -35,7 +35,7 @@ var messager = vAPI.messaging.channel('about.js');
 
 var exportToFile = function() {
     var onUserDataReady = function(userData) {
-        if (!userData) {
+        if ( !userData ) {
             return;
         }
         var now = new Date();

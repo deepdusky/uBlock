@@ -201,7 +201,7 @@ var renderPageSelector = function(targetTabId) {
             tab.title
         ];
         uDom('#pageSelector').append(html.join(''));
-        if ( tab.id === selectedTabId ) {
+        if ( tab.id == selectedTabId ) {
             setTimeout(function() { uDom('#pageSelector').val(tab.id); }, 0);
         }
     };
