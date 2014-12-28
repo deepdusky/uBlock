@@ -60,9 +60,10 @@ var toPrettyTypeNames = {
 var chunkify = function(s) {
     var chunkSize = 50;
     var chunks = [];
-    while ( s.length ) {
-        chunks.push(s.slice(0, chunkSize));
-        s = s.slice(chunkSize);
+    var position = 0;
+    while ( position < s.length ) {
+        chunks.push(s.substr(position, chunkSize));
+        position += chunkSize;
     }
     return chunks;
 };
